@@ -5,11 +5,14 @@ import Image from "next/image";
 import { toPng } from "html-to-image";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Upload, Download, RefreshCw } from "lucide-react";
+import { ImageCropper } from "./ImageCropper";
 
 export function BadgeGenerator() {
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [rawImageUrl, setRawImageUrl] = useState<string | null>(null);
+  const [isCropping, setIsCropping] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const badgeRef = useRef<HTMLDivElement>(null);
 
@@ -17,8 +20,19 @@ export function BadgeGenerator() {
     const file = e.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setPhotoUrl(url);
+      setRawImageUrl(url);
+      setIsCropping(true);
+      e.target.value = '';
     }
+  };
+
+  const handleCropComplete = (croppedUrl: string) => {
+    setPhotoUrl(croppedUrl);
+    setIsCropping(false);
+  };
+
+  const handleCropCancel = () => {
+    setIsCropping(false);
   };
 
   const handleDownload = useCallback(async () => {
@@ -192,6 +206,15 @@ export function BadgeGenerator() {
           </div>
         </div>
       </div>
+
+      {/* Cropper Modal */}
+      {isCropping && rawImageUrl && (
+        <ImageCropper
+          image={rawImageUrl}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+        />
+      )}
     </section>
   );
 }
