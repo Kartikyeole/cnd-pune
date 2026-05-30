@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { BadgeGenerator } from "@/components/sections/Badge/BadgeGenerator";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
+      <Analytics />
       <body className="min-h-full flex flex-col bg-[#F8FAFC] dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans selection:bg-cnd-blue selection:text-white overflow-x-hidden relative">
         <div className="absolute inset-0 bg-grid-cyber pointer-events-none opacity-40 z-0" />
         <div className="absolute inset-0 bg-grid-cyber-fine pointer-events-none opacity-20 z-0" />
