@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) {
                         },
                     ],
                 },
-            },
+            } as any,
             {
                 width: 1080,
                 height: 1080,
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
 
         const pngBuffer = resvg.render().asPng();
 
-        return new NextResponse(pngBuffer, {
+        return new NextResponse(new Uint8Array(pngBuffer), {
             headers: {
                 "Content-Type": "image/png",
             },
