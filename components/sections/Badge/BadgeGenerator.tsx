@@ -13,40 +13,67 @@ export function BadgeGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const badgeRef = useRef<HTMLDivElement>(null);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setPhotoUrl(url);
-    }
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      setPhotoUrl(reader.result as string);
+    };
+
+    reader.onerror = (error) => {
+      console.error("Failed to read image:", error);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const handleDownload = useCallback(async () => {
-    if (!badgeRef.current) return;
-
     try {
       setIsGenerating(true);
-      // Get current width of the preview container
-      const currentWidth = badgeRef.current.offsetWidth;
-      // Calculate pixel ratio to upscale to exactly 1080px
-      const scale = 1080 / currentWidth;
 
-      const dataUrl = await toPng(badgeRef.current, {
-        quality: 1,
-        pixelRatio: scale, // ensures the output image is 1080x1080
-        fontEmbedCSS: '', // Bypasses the CSSStyleSheet cssRules CORS error
+      const response = await fetch("/api/badge", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          name,
+          role,
+          photo: photoUrl,
+        }),
       });
 
+      if (!response.ok) {
+        throw new Error("Badge generation failed");
+      }
+
+      const blob = await response.blob();
+
+      const url = URL.createObjectURL(blob);
+
       const link = document.createElement("a");
-      link.download = `CND-Pune-2026-Badge-${name.replace(/\s+/g, '-').toLowerCase() || 'attendee'}.png`;
-      link.href = dataUrl;
+
+      link.href = url;
+
+      link.download = `CND-Pune-2026-Badge-${name.replace(/\s+/g, "-").toLowerCase() || "attendee"
+        }.png`;
+
       link.click();
-    } catch (err) {
-      console.error("Failed to generate badge", err);
+
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
     } finally {
       setIsGenerating(false);
     }
-  }, [name]);
+  }, [name, role, photoUrl]);
 
   return (
     <section id="badge" className="max-w-7xl mx-auto px-4 py-24 relative z-10">
