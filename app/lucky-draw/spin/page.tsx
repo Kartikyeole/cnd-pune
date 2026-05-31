@@ -7,6 +7,28 @@ import { ArrowLeft, Lock, Sparkles, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+const CONFETTI_COLORS = ["#62FEFF", "#30DBEF", "#360DEF", "#F6DEC0", "#EEF5FF"];
+
+/** Celebratory confetti: one big center burst, then ~1.4s of side cannons. */
+async function celebrate() {
+  const confetti = (await import("canvas-confetti")).default;
+
+  confetti({
+    particleCount: 140,
+    spread: 80,
+    startVelocity: 55,
+    origin: { y: 0.6 },
+    colors: CONFETTI_COLORS,
+  });
+
+  const end = Date.now() + 1400;
+  (function frame() {
+    confetti({ particleCount: 6, angle: 60, spread: 60, origin: { x: 0 }, colors: CONFETTI_COLORS });
+    confetti({ particleCount: 6, angle: 120, spread: 60, origin: { x: 1 }, colors: CONFETTI_COLORS });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+}
+
 type Entry = { number: number; created_at: number };
 type Winner = { number: number; won_at: number };
 
@@ -112,6 +134,7 @@ function SpinStage({ state, refresh }: { state: State | null; refresh: () => voi
         if (ok && d?.winner) {
           setRollingNumber(d.winner.number);
           setWinner(d.winner);
+          celebrate(); // 🎉 confetti once the number is announced
         } else {
           setError(d?.error ?? "Could not draw.");
         }
@@ -170,7 +193,7 @@ function SpinStage({ state, refresh }: { state: State | null; refresh: () => voi
       {count === 0 && <p className="mt-2 text-sm text-cnd-light/50">No numbers left to draw.</p>}
       {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
 
-      {winners.length > 0 && (
+      {(winners.length > 0 && !isSpinning) && (
         <div className="mt-10 w-full max-w-2xl">
           <p className="mb-3 flex items-center justify-center gap-2 text-xs font-semibold tracking-widest text-cnd-cyan uppercase">
             <Trophy className="size-3.5" /> Already drawn
