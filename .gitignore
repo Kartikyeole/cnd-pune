@@ -24,8 +24,7 @@
 .DS_Store
 *.pem
 
-# lucky-draw sqlite database
-/data
+
 
 # debug
 npm-debug.log*
