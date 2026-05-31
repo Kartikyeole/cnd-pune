@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { BadgeGenerator } from "@/components/sections/Badge/BadgeGenerator";
 import { Analytics } from "@vercel/analytics/next"
+import LuckyDrawPage from "./lucky-draw/page";
+import SpinPage from "./lucky-draw/spin/page";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +45,7 @@ export default function RootLayout({
         <div className="absolute top-[30%] right-[10%] w-[400px] h-[400px] bg-cnd-sky/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-[20%] left-[20%] w-[500px] h-[500px] bg-cnd-blue/5 rounded-full blur-[140px] pointer-events-none" />
         <Navbar otherSection={true} />
-        <BadgeGenerator />
+        {children}
         <Footer />
       </body>
     </html>
