@@ -3,7 +3,7 @@ import React from "react";
 export default function Navbar({ otherSection = true }: { otherSection?: boolean }) {
   return (
     <nav className="sticky top-0 bg-cnd-light/90 dark:bg-cnd-indigo/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 z-30 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-center">
         <div className="flex items-center gap-3">
           <Image
             src="/CND_logo.png"
