@@ -1,6 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Playfair+Display:ital,wght@1,600;1,700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+
+@utility font-header {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+@utility font-serif-italic {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+}
 
 @custom-variant dark (&:is(.dark *));
 
