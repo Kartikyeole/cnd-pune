@@ -12,14 +12,22 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
 
         const name = body.name || "";
-        const role = body.role || "";
+        const designation = body.designation || "";
+        const company = body.company || "";
         const photo = body.photo || null;
+        const zoom = typeof body.zoom === "number" ? body.zoom : 120;
+        const posX = typeof body.posX === "number" ? body.posX : 50;
+        const posY = typeof body.posY === "number" ? body.posY : 50;
 
         console.log({
             name,
-            role,
+            designation,
+            company,
             photoExists: !!photo,
             photoPreview: photo?.substring?.(0, 50),
+            zoom,
+            posX,
+            posY,
         });
 
         const regularFont = fs.readFileSync(
@@ -31,7 +39,7 @@ export async function POST(req: NextRequest) {
         );
 
         const bgBuffer = fs.readFileSync(
-            path.join(process.cwd(), "public", "attending-event-blank.png")
+            path.join(process.cwd(), "public", "GemmaMeetup.png")
         );
 
         const bgBase64 = bgBuffer.toString("base64");
@@ -63,45 +71,84 @@ export async function POST(req: NextRequest) {
                             props: {
                                 style: {
                                     position: "absolute",
-                                    top: "521px",
-                                    left: "234px",
+                                    top: "500px",
+                                    left: "600px",
                                     width: "600px",
-                                    height: "210px",
+                                    height: "480px",
                                     display: "flex",
+                                    flexDirection: "column",
                                     alignItems: "center",
+                                    justifyContent: "flex-start",
                                 },
 
                                 children: [
-                                    photo &&
-                                        typeof photo === "string" &&
-                                        photo.startsWith("data:image")
-                                        ? {
-                                            type: "img",
-                                            props: {
-                                                src: photo,
-                                                width: 180,
-                                                height: 180,
-                                                style: {
-                                                    objectFit: "cover",
-                                                },
+                                    {
+                                        type: "div",
+                                        props: {
+                                            style: {
+                                                width: "190px",
+                                                height: "190px",
+                                                borderRadius: "24px",
+                                                padding: "3px",
+                                                backgroundImage: "linear-gradient(to top right, #4285f4, #ea4335, #fbbc05, #34a853)",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                flexShrink: 0,
                                             },
+                                            children: [
+                                                {
+                                                    type: "div",
+                                                    props: {
+                                                        style: {
+                                                            width: "100%",
+                                                            height: "100%",
+                                                            borderRadius: "21px",
+                                                            overflow: "hidden",
+                                                            position: "relative",
+                                                            display: "flex",
+                                                            backgroundColor: "#cbd5e1",
+                                                        },
+                                                        children: [
+                                                            photo &&
+                                                            typeof photo === "string" &&
+                                                            photo.startsWith("data:image")
+                                                            ? {
+                                                                type: "img",
+                                                                props: {
+                                                                    src: photo,
+                                                                    style: {
+                                                                        position: "absolute",
+                                                                        width: `${zoom}%`,
+                                                                        height: `${zoom}%`,
+                                                                        left: `-${(zoom - 100) * (posX / 100)}%`,
+                                                                        top: `-${(zoom - 100) * (posY / 100)}%`,
+                                                                        objectFit: "cover",
+                                                                    },
+                                                                },
+                                                            }
+                                                            : {
+                                                                type: "div",
+                                                                props: {
+                                                                    style: {
+                                                                        width: "100%",
+                                                                        height: "100%",
+                                                                        backgroundColor: "#e5e7eb",
+                                                                        display: "flex",
+                                                                        justifyContent: "center",
+                                                                        alignItems: "center",
+                                                                        color: "#64748b",
+                                                                        fontSize: "20px",
+                                                                    },
+                                                                    children: "Photo",
+                                                                },
+                                                            }
+                                                        ]
+                                                    }
+                                                }
+                                            ]
                                         }
-                                        : {
-                                            type: "div",
-                                            props: {
-                                                style: {
-                                                    width: "180px",
-                                                    height: "180px",
-                                                    backgroundColor: "#e5e7eb",
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    color: "#64748b",
-                                                    fontSize: "20px",
-                                                },
-                                                children: "Photo",
-                                            },
-                                        },
+                                    },
 
                                     {
                                         type: "div",
@@ -109,7 +156,9 @@ export async function POST(req: NextRequest) {
                                             style: {
                                                 display: "flex",
                                                 flexDirection: "column",
-                                                marginLeft: "24px",
+                                                alignItems: "center",
+                                                marginTop: "20px",
+                                                width: "100%",
                                             },
 
                                             children: [
@@ -118,10 +167,11 @@ export async function POST(req: NextRequest) {
                                                     props: {
                                                         children: name || "Your Name",
                                                         style: {
-                                                            fontSize: "42px",
-                                                            fontWeight: 700,
-                                                            color: "#1a365d",
+                                                            fontSize: "36px",
+                                                            fontWeight: 900,
+                                                            color: "#0f172a",
                                                             fontFamily: "Inter",
+                                                            textAlign: "center",
                                                         },
                                                     },
                                                 },
@@ -129,15 +179,72 @@ export async function POST(req: NextRequest) {
                                                 {
                                                     type: "div",
                                                     props: {
-                                                        children: role || "Your Role / Company",
+                                                        children: designation || "Your Designation",
                                                         style: {
-                                                            fontSize: "24px",
-                                                            color: "#4a5568",
-                                                            marginTop: "8px",
+                                                            fontSize: "20px",
+                                                            fontWeight: 700,
+                                                            color: "#1a73e8",
+                                                            marginTop: "6px",
                                                             fontFamily: "Inter",
+                                                            textAlign: "center",
                                                         },
                                                     },
                                                 },
+
+                                                {
+                                                    type: "div",
+                                                    props: {
+                                                        children: company || "Your Company Name",
+                                                        style: {
+                                                            fontSize: "18px",
+                                                            fontWeight: 600,
+                                                            color: "#64748b",
+                                                            marginTop: "4px",
+                                                            fontFamily: "Inter",
+                                                            textAlign: "center",
+                                                        },
+                                                    },
+                                                },
+
+                                                {
+                                                    type: "div",
+                                                    props: {
+                                                        style: {
+                                                            display: "flex",
+                                                            height: "4px",
+                                                            width: "140px",
+                                                            marginTop: "16px",
+                                                            borderRadius: "9999px",
+                                                            overflow: "hidden",
+                                                        },
+                                                        children: [
+                                                            {
+                                                                type: "div",
+                                                                props: {
+                                                                    style: { width: "25%", height: "100%", backgroundColor: "#4285f4" }
+                                                                }
+                                                            },
+                                                            {
+                                                                type: "div",
+                                                                props: {
+                                                                    style: { width: "25%", height: "100%", backgroundColor: "#ea4335" }
+                                                                }
+                                                            },
+                                                            {
+                                                                type: "div",
+                                                                props: {
+                                                                    style: { width: "25%", height: "100%", backgroundColor: "#fbbc05" }
+                                                                }
+                                                            },
+                                                            {
+                                                                type: "div",
+                                                                props: {
+                                                                    style: { width: "25%", height: "100%", backgroundColor: "#34a853" }
+                                                                }
+                                                            }
+                                                        ]
+                                                    }
+                                                }
                                             ],
                                         },
                                     },
