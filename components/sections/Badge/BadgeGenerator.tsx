@@ -25,7 +25,8 @@ export function BadgeGenerator() {
 
   // System states
   const [isGenerating, setIsGenerating] = useState(false);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [isDragActive, setIsDragActive] = useState(false);
 
@@ -41,14 +42,6 @@ export function BadgeGenerator() {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 3000);
   }, []);
-
-  // Preset handler
-  const applyPreset = (presetName: string, presetDesignation: string, presetCompany: string) => {
-    setName(presetName);
-    setDesignation(presetDesignation);
-    setCompany(presetCompany);
-    showToast("Preset details applied successfully!");
-  };
 
   // Drag-and-drop & file upload helpers
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,6 +103,7 @@ export function BadgeGenerator() {
   }, []);
 
   useEffect(() => {
+    setMounted(true);
     scaleBadgeToFit();
     if (typeof window !== "undefined") {
       if ("ResizeObserver" in window && previewRef.current) {
@@ -176,7 +170,7 @@ export function BadgeGenerator() {
         lineColor="bg-cnd-light dark:bg-cnd-indigo/50"
       />
 
-      <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center w-full">
         {/* Controls Column (Left) */}
         <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6 text-slate-100">
           <div className="border-b border-slate-800 pb-4">
@@ -184,36 +178,6 @@ export function BadgeGenerator() {
             <p className="text-xs text-slate-400 mt-1">
               Fill in your information and position your profile picture to perfection.
             </p>
-          </div>
-
-          {/* Quick Presets */}
-          <div>
-            <span className="text-xs font-semibold text-slate-400 block mb-2 uppercase tracking-wider">
-              Quick Fill Presets:
-            </span>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => applyPreset("Rahul Sharma", "Cloud Engineer", "Tech Solutions")}
-                className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition duration-200 border border-slate-700 cursor-pointer"
-              >
-                Rahul (Dev)
-              </button>
-              <button
-                type="button"
-                onClick={() => applyPreset("Priya Patel", "AI Researcher", "DataMinds Corp")}
-                className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition duration-200 border border-slate-700 cursor-pointer"
-              >
-                Priya (AI)
-              </button>
-              <button
-                type="button"
-                onClick={() => applyPreset("Amit Verma", "Product Manager", "Google Pune")}
-                className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition duration-200 border border-slate-700 cursor-pointer"
-              >
-                Amit (Google)
-              </button>
-            </div>
           </div>
 
           {/* Inputs */}
@@ -273,8 +237,8 @@ export function BadgeGenerator() {
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-xl p-4 transition duration-200 cursor-pointer text-center relative ${isDragActive
-                    ? "border-sky-500 bg-slate-900"
-                    : "border-slate-800 hover:border-sky-500/50 bg-slate-950/50 hover:bg-slate-950"
+                  ? "border-sky-500 bg-slate-900"
+                  : "border-slate-800 hover:border-sky-500/50 bg-slate-950/50 hover:bg-slate-950"
                   }`}
               >
                 <input
@@ -393,119 +357,123 @@ export function BadgeGenerator() {
 
         {/* Preview Column (Right) */}
         <div className="lg:col-span-7 flex flex-col items-center justify-start space-y-4">
-          <div className="w-full flex items-center justify-between px-2 text-slate-400">
-            <span className="text-sm font-semibold flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-ping"></span>
-              Live Preview (Interactive)
-            </span>
-            <span className="text-xs text-slate-500">1080 × 1080 Ultra-crisp Canvas</span>
-          </div>
 
           {/* Responsive preview container with dynamic scaling */}
           <div
             ref={previewRef}
             className="w-full bg-slate-900 border border-slate-800/80 rounded-2xl p-6 shadow-xl flex items-center justify-center overflow-hidden"
-            style={{ height: `${Math.max(500, 1080 * scale + 32)}px` }}
+            style={{ height: scale > 0 ? `${Math.max(500, 1080 * scale + 48)}px` : "500px" }}
           >
-            {/* THE ACTUAL BADGE CARD */}
-            <div
-              id="badge-card"
-              className="w-[1080px] h-[1080px] bg-white relative shrink-0 shadow-2xl overflow-hidden select-none"
-              style={{
-                transform: `scale(${scale})`,
-                transformOrigin: "center center",
-              }}
-            >
-              {/* Background Blank Template from GemmaMeetup */}
-              <Image
-                src="/GemmaMeetup.png"
-                alt="Badge Template"
-                fill
-                className="object-cover z-0"
-                priority
-                unoptimized
-              />
-
-              {/* White Box Content Area overlay - matching Satori coordinates on the 1080x1080 canvas */}
+            {/* The scaled wrapper that bounds layout size to avoid horizontal overflow */}
+            {mounted && scale > 0 && (
               <div
-                className="absolute z-10 flex flex-col items-center bg-transparent"
+                className="relative overflow-hidden flex-shrink-0"
                 style={{
-                  top: "430px",
-                  left: "600px",
-                  width: "600px",
-                  height: "480px",
+                  width: `${1080 * scale}px`,
+                  height: `${1080 * scale}px`,
                 }}
               >
-                {/* Photo Area with premium gradient border */}
+                {/* THE ACTUAL BADGE CARD */}
                 <div
-                  className="w-[220px] h-[220px] rounded-[24px] p-[3px] shadow-md flex-shrink-0 flex items-center justify-center"
+                  id="badge-card"
+                  className="w-[1080px] h-[1080px] bg-white absolute top-1/2 left-1/2 select-none"
                   style={{
-                    backgroundImage: "linear-gradient(to top right, #4285f4, #ea4335, #fbbc05, #34a853)",
+                    transform: `translate(-50%, -50%) scale(${scale})`,
+                    transformOrigin: "center center",
                   }}
                 >
-                  <div className="w-full h-full bg-slate-100 rounded-[21px] overflow-hidden relative flex">
-                    {uploadedImageSrc ? (
-                      <div
-                        className="w-full h-full bg-no-repeat"
-                        style={{
-                          backgroundImage: `url(${uploadedImageSrc})`,
-                          backgroundSize: `${zoom}%`,
-                          backgroundPosition: `${posX}% ${posY}%`,
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-200">
-                        <svg className="w-10 h-10 opacity-40 mb-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                        </svg>
-                        <span className="text-[9px] font-black tracking-widest text-slate-500 uppercase font-header">
-                          YOUR PHOTO
-                        </span>
+                  {/* Background Blank Template from GemmaMeetup */}
+                  <Image
+                    src="/GemmaMeetup.png"
+                    alt="Badge Template"
+                    fill
+                    className="object-cover z-0"
+                    priority
+                    unoptimized
+                  />
+
+                  {/* White Box Content Area overlay - matching Satori coordinates on the 1080x1080 canvas */}
+                  <div
+                    className="absolute z-10 flex flex-col items-center bg-transparent"
+                    style={{
+                      top: "410px",
+                      left: "560px",
+                      width: "700px",
+                      height: "500px",
+                    }}
+                  >
+                    {/* Photo Area with premium gradient border */}
+                    <div
+                      className="w-[280px] h-[285px] rounded-[24px] p-[3px] shadow-md flex-shrink-0 flex items-center justify-center"
+                      style={{
+                        backgroundImage: "linear-gradient(to top right, #4285f4, #ea4335, #fbbc05, #34a853)",
+                      }}
+                    >
+                      <div className="w-full h-full bg-slate-100 rounded-[21px] overflow-hidden relative flex">
+                        {uploadedImageSrc ? (
+                          <div
+                            className="w-full h-full bg-no-repeat"
+                            style={{
+                              backgroundImage: `url(${uploadedImageSrc})`,
+                              backgroundSize: `${zoom}%`,
+                              backgroundPosition: `${posX}% ${posY}%`,
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-200">
+                            <svg className="w-10 h-10 opacity-40 mb-1" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            </svg>
+                            <span className="text-[9px] font-black tracking-widest text-slate-500 uppercase font-header">
+                              YOUR PHOTO
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </div>
+                    </div>
 
-                {/* Text Area */}
-                <div className="mt-5 flex flex-col items-center text-center w-full">
-                  <h2
-                    className="font-black text-slate-900 font-header leading-tight truncate max-w-[500px]"
-                    style={{
-                      fontSize: "36px",
-                      fontFamily: "Inter, sans-serif",
-                    }}
-                  >
-                    {name.trim() || "Your Name"}
-                  </h2>
-                  <p
-                    className="font-bold text-[#1a73e8] font-header tracking-wide mt-1.5 truncate max-w-[500px]"
-                    style={{
-                      fontSize: "20px",
-                      fontFamily: "Inter, sans-serif",
-                    }}
-                  >
-                    {designation.trim() || "Your Designation"}
-                  </p>
-                  <p
-                    className="font-semibold text-slate-500 tracking-wide mt-1 truncate max-w-[500px]"
-                    style={{
-                      fontSize: "18px",
-                      fontFamily: "Inter, sans-serif",
-                    }}
-                  >
-                    {company.trim() || "Your Company Name"}
-                  </p>
+                    {/* Text Area */}
+                    <div className="mt-5 flex flex-col items-center text-center w-full">
+                      <h2
+                        className="font-black text-slate-900 font-header leading-tight truncate max-w-[500px]"
+                        style={{
+                          fontSize: "36px",
+                          fontFamily: "Inter, sans-serif",
+                        }}
+                      >
+                        {name.trim() || "Your Name"}
+                      </h2>
+                      <p
+                        className="font-bold text-[#1a73e8] font-header tracking-wide mt-1.5 truncate max-w-[500px]"
+                        style={{
+                          fontSize: "20px",
+                          fontFamily: "Inter, sans-serif",
+                        }}
+                      >
+                        {designation.trim() || "Your Designation"}
+                      </p>
+                      <p
+                        className="font-semibold text-slate-500 tracking-wide mt-1 truncate max-w-[500px]"
+                        style={{
+                          fontSize: "18px",
+                          fontFamily: "Inter, sans-serif",
+                        }}
+                      >
+                        {company.trim() || "Your Company Name"}
+                      </p>
 
-                  {/* Classic Google Color Strip Line */}
-                  <div className="flex items-center justify-center gap-0 h-[4px] w-[140px] mx-auto mt-4 rounded-full overflow-hidden">
-                    <span className="w-1/4 h-full bg-[#4285f4]"></span>
-                    <span className="w-1/4 h-full bg-[#ea4335]"></span>
-                    <span className="w-1/4 h-full bg-[#fbbc05]"></span>
-                    <span className="w-1/4 h-full bg-[#34a853]"></span>
+                      {/* Classic Google Color Strip Line */}
+                      <div className="flex items-center justify-center gap-0 h-[4px] w-[140px] mx-auto mt-4 rounded-full overflow-hidden">
+                        <span className="w-1/4 h-full bg-[#4285f4]"></span>
+                        <span className="w-1/4 h-full bg-[#ea4335]"></span>
+                        <span className="w-1/4 h-full bg-[#fbbc05]"></span>
+                        <span className="w-1/4 h-full bg-[#34a853]"></span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
