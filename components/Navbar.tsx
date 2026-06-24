@@ -13,23 +13,6 @@ export default function Navbar({ otherSection = true }: { otherSection?: boolean
             className="h-10 w-auto object-contain object-left shrink-0"
             priority
           />
-          <div className="h-6 w-px bg-slate-300 dark:bg-slate-700 mx-1" />
-          <div className="flex items-center py-1.5 px-3 rounded-lg dark:bg-cnd-indigo">
-            <Image
-              src="/vultr-logo-rec-white.png"
-              alt="Vultr Light"
-              width={70}
-              height={20}
-              className="h-4 w-auto object-contain dark:hidden"
-            />
-            <Image
-              src="/vultr-logo-rec-dark.png"
-              alt="Vultr Dark"
-              width={70}
-              height={20}
-              className="h-4 w-auto object-contain hidden dark:block"
-            />
-          </div>
         </div>
 
         {!otherSection && <div className="hidden md:flex items-center gap-8 text-xs font-mono font-bold text-slate-500 uppercase tracking-wider">

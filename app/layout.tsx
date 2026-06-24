@@ -41,9 +41,9 @@ export default function RootLayout({
         <div className="absolute inset-0 bg-grid-cyber-fine pointer-events-none opacity-20 z-0" />
 
         {/* Soft Blue Ambient light glows */}
-        <div className="absolute top-[10%] left-[5%] w-[350px] h-[350px] bg-cnd-blue/5 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute top-[30%] right-[10%] w-[400px] h-[400px] bg-cnd-sky/5 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[20%] left-[20%] w-[500px] h-[500px] bg-cnd-blue/5 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute top-[10%] left-[5%] w-[75vw] h-[75vh] bg-cnd-blue/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-[30%] right-[10%] w-[75vw] h-[75vh] bg-cnd-sky/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[20%] left-[20%] w-[75vw] h-[75vh] bg-cnd-blue/5 rounded-full blur-[140px] pointer-events-none" />
         <Navbar otherSection={true} />
         {children}
         <Footer />

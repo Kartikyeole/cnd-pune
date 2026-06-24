@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
                             props: {
                                 style: {
                                     position: "absolute",
-                                    top: "500px",
+                                    top: "410px",
                                     left: "600px",
                                     width: "600px",
                                     height: "480px",
@@ -86,8 +86,8 @@ export async function POST(req: NextRequest) {
                                         type: "div",
                                         props: {
                                             style: {
-                                                width: "190px",
-                                                height: "190px",
+                                                width: "250px",
+                                                height: "280px",
                                                 borderRadius: "24px",
                                                 padding: "3px",
                                                 backgroundImage: "linear-gradient(to top right, #4285f4, #ea4335, #fbbc05, #34a853)",
@@ -111,38 +111,38 @@ export async function POST(req: NextRequest) {
                                                         },
                                                         children: [
                                                             photo &&
-                                                            typeof photo === "string" &&
-                                                            photo.startsWith("data:image")
-                                                            ? {
-                                                                type: "img",
-                                                                props: {
-                                                                    src: photo,
-                                                                    style: {
-                                                                        position: "absolute",
-                                                                        width: `${zoom}%`,
-                                                                        height: `${zoom}%`,
-                                                                        left: `-${(zoom - 100) * (posX / 100)}%`,
-                                                                        top: `-${(zoom - 100) * (posY / 100)}%`,
-                                                                        objectFit: "cover",
+                                                                typeof photo === "string" &&
+                                                                photo.startsWith("data:image")
+                                                                ? {
+                                                                    type: "img",
+                                                                    props: {
+                                                                        src: photo,
+                                                                        style: {
+                                                                            position: "absolute",
+                                                                            width: `${zoom}%`,
+                                                                            height: `${zoom}%`,
+                                                                            left: `-${(zoom - 100) * (posX / 100)}%`,
+                                                                            top: `-${(zoom - 100) * (posY / 100)}%`,
+                                                                            objectFit: "cover",
+                                                                        },
                                                                     },
-                                                                },
-                                                            }
-                                                            : {
-                                                                type: "div",
-                                                                props: {
-                                                                    style: {
-                                                                        width: "100%",
-                                                                        height: "100%",
-                                                                        backgroundColor: "#e5e7eb",
-                                                                        display: "flex",
-                                                                        justifyContent: "center",
-                                                                        alignItems: "center",
-                                                                        color: "#64748b",
-                                                                        fontSize: "20px",
+                                                                }
+                                                                : {
+                                                                    type: "div",
+                                                                    props: {
+                                                                        style: {
+                                                                            width: "100%",
+                                                                            height: "100%",
+                                                                            backgroundColor: "#e5e7eb",
+                                                                            display: "flex",
+                                                                            justifyContent: "center",
+                                                                            alignItems: "center",
+                                                                            color: "#64748b",
+                                                                            fontSize: "20px",
+                                                                        },
+                                                                        children: "Photo",
                                                                     },
-                                                                    children: "Photo",
-                                                                },
-                                                            }
+                                                                }
                                                         ]
                                                     }
                                                 }

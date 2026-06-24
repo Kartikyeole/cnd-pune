@@ -25,7 +25,6 @@ export default function Footer() {
           <a href="https://github.com" className="hover:text-cnd-blue transition-colors">./github</a>
           <a href="https://twitter.com" className="hover:text-cnd-blue transition-colors">./twitter_x</a>
           <a href="https://cncf.io" className="hover:text-cnd-blue transition-colors">./cncf_community</a>
-          <a href="https://www.vultr.com" className="hover:text-cnd-blue transition-colors">./vultr_hosting</a>
         </div>
 
         <div className="space-y-1 text-xs text-slate-500">
